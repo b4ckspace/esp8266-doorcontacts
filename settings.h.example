@@ -1,0 +1,12 @@
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
+#define HOSTNAME "ESP-DoorContacts"
+
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
+
+#define MQTT_HOST ""
+#define MQTT_TOPIC_LAST_WILL ""
+
+#define OTA_PASSWORD ""
+

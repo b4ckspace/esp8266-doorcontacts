@@ -19,11 +19,15 @@ t_pinConfiguration pins[] = {
   {D7, "sensor/door/lounge",     "open", "closed", 200, NULL}
 };
 
+uint8_t mqttRetryCounter = 0;
+
 WiFiClient wifiClient;
 PubSubClient mqttClient;
 Bounce debouncer = Bounce();
 
 void setup() {
+
+  delay(2500);
   
   Serial.begin(115200);
   delay(10);
@@ -46,19 +50,26 @@ void setup() {
   }
   
   mqttClient.setClient(wifiClient);
-  mqttClient.setServer(MQTT_HOST, 1883);
+  mqttClient.setServer(MQTT_HOST, MQTT_PORT);
   
   ArduinoOTA.setHostname(HOSTNAME);
   ArduinoOTA.setPassword(OTA_PASSWORD);
   ArduinoOTA.begin();
 }
 
-void connectMqtt() {
+void mqttConnect() {
   while (!mqttClient.connected()) {
     if (mqttClient.connect(HOSTNAME, MQTT_TOPIC_LAST_WILL, 1, true, "disconnected")) {
       mqttClient.publish(MQTT_TOPIC_LAST_WILL, "connected", true);
+      mqttRetryCounter = 0;
+      
     } else {
-      delay(1000);
+            
+      if (mqttRetryCounter++ > MQTT_MAX_CONNECT_RETRY) {
+        ESP.restart();
+      }
+      
+      delay(2000);
     }
   }
 }
@@ -75,7 +86,7 @@ void loop() {
     }
   }
 
-  connectMqtt();
+  mqttConnect();
   mqttClient.loop();
   ArduinoOTA.handle();
 }

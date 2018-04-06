@@ -6,7 +6,9 @@
 #define WIFI_PASSWORD ""
 
 #define MQTT_HOST ""
+#define MQTT_PORT 1883
 #define MQTT_TOPIC_LAST_WILL ""
+#define MQTT_MAX_CONNECT_RETRY 42
 
 #define OTA_PASSWORD ""
 
